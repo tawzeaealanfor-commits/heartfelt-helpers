@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -10,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchSellersOverview, type SellerItem } from "@/lib/sellers";
+import { getSellersOverview, type SellerItem } from "@/lib/sellers.functions";
 import { applyFilters, type FilterColumn, type FilterRow } from "@/lib/filters";
 import { nf, statusLabel } from "@/lib/format";
 
@@ -66,7 +67,8 @@ const FILTER_COLUMNS: FilterColumn[] = [
 ];
 
 function SellersPage() {
-  const query = useQuery({ queryKey: ["sellers-overview"], queryFn: fetchSellersOverview });
+  const fetchOverview = useServerFn(getSellersOverview);
+  const query = useQuery({ queryKey: ["sellers-overview"], queryFn: () => fetchOverview() });
 
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<FilterRow[]>([]);
@@ -130,11 +132,7 @@ function SellersPage() {
         ) : !stats ? (
           <Card className="rounded-xl shadow-sm">
             <CardContent className="p-6 text-center text-sm text-muted-foreground">
-              {query.error instanceof Error && query.error.message.includes("FORBIDDEN")
-                ? "هذه الصفحة مخصصة للإدارة فقط."
-                : query.error instanceof Error
-                  ? `تعذر تحميل البيانات: ${query.error.message}`
-                  : "لم يتم العثور على البيانات."}
+              لم يتم العثور على البيانات.
             </CardContent>
           </Card>
         ) : (

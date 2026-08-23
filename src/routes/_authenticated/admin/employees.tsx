@@ -19,8 +19,6 @@ import {
   type AccountType,
 } from "@/lib/access";
 import { fetchAdminUsers, formatDateTime } from "@/lib/admin-users";
-import { supabase } from "@/integrations/supabase/client";
-import { ROLE_STATUS_LABELS, assignStaffRole, fetchStaffRoles } from "@/lib/roles";
 import {
   adminCreateEmployee,
   adminSetUserRole,
@@ -46,15 +44,6 @@ export const Route = createFileRoute("/_authenticated/admin/employees")({
 function EmployeesPage() {
   const queryClient = useQueryClient();
   const users = useQuery({ queryKey: ["admin-users"], queryFn: fetchAdminUsers });
-  const staffRoles = useQuery({ queryKey: ["staff-roles"], queryFn: fetchStaffRoles });
-  const staffAssignments = useQuery({
-    queryKey: ["employee-staff-roles"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("profiles").select("id, staff_role_id");
-      if (error) throw new Error(error.message);
-      return new Map((data ?? []).map((row) => [row.id, row.staff_role_id]));
-    },
-  });
 
   const createEmployee = useServerFn(adminCreateEmployee);
   const setRole = useServerFn(adminSetUserRole);
@@ -67,19 +56,6 @@ function EmployeesPage() {
   const [role, setRoleValue] = useState<"employee" | "management">("employee");
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-
-  const updateStaffRole = useMutation({
-    mutationFn: (vars: { userId: string; roleId: string | null }) =>
-      assignStaffRole(vars.userId, vars.roleId),
-    onSuccess: async () => {
-      toast.success("تم تعيين الدور الإداري للموظف.");
-      await queryClient.invalidateQueries({ queryKey: ["employee-staff-roles"] });
-      await queryClient.invalidateQueries({ queryKey: ["staff-roles"] });
-      await queryClient.invalidateQueries({ queryKey: ["my-permissions"] });
-    },
-    onError: (error: unknown) =>
-      toast.error(error instanceof Error ? error.message : "تعذر تعيين الدور."),
-  });
 
   const create = useMutation({
     mutationFn: async () => {
@@ -222,29 +198,6 @@ function EmployeesPage() {
                           إعادة تفعيل
                         </Button>
                       )}
-                      <Select
-                        value={staffAssignments.data?.get(u.id) ?? "none"}
-                        onValueChange={(v) =>
-                          updateStaffRole.mutate({ userId: u.id, roleId: v === "none" ? null : v })
-                        }
-                      >
-                        <SelectTrigger className="w-44 rounded-full">
-                          <SelectValue placeholder="الدور الإداري" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">بدون دور إداري</SelectItem>
-                          {(staffRoles.data ?? []).map((r) => (
-                            <SelectItem
-                              key={r.id}
-                              value={r.id}
-                              disabled={r.status === "disabled" && staffAssignments.data?.get(u.id) !== r.id}
-                            >
-                              {r.name}
-                              {r.status === "disabled" ? ` (${ROLE_STATUS_LABELS.disabled})` : ""}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                       <Button asChild size="sm" variant="ghost">
                         <Link to="/admin/users/$id" params={{ id: u.id }}>
                           فتح الملف

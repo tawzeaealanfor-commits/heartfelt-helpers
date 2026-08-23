@@ -83,11 +83,7 @@ export type Database = {
           created_at: string
           ended_at: string | null
           id: string
-          note: string | null
           order_id: string
-          outcome: string | null
-          recording_url: string | null
-          screenshot_url: string | null
           started_at: string
         }
         Insert: {
@@ -95,11 +91,7 @@ export type Database = {
           created_at?: string
           ended_at?: string | null
           id?: string
-          note?: string | null
           order_id: string
-          outcome?: string | null
-          recording_url?: string | null
-          screenshot_url?: string | null
           started_at: string
         }
         Update: {
@@ -107,11 +99,7 @@ export type Database = {
           created_at?: string
           ended_at?: string | null
           id?: string
-          note?: string | null
           order_id?: string
-          outcome?: string | null
-          recording_url?: string | null
-          screenshot_url?: string | null
           started_at?: string
         }
         Relationships: [
@@ -133,29 +121,23 @@ export type Database = {
       }
       complaints: {
         Row: {
-          author_id: string | null
           created_at: string
           id: string
           order_id: string | null
-          rating: number | null
           status: Database["public"]["Enums"]["complaint_status"]
           subject: string
         }
         Insert: {
-          author_id?: string | null
           created_at?: string
           id?: string
           order_id?: string | null
-          rating?: number | null
           status?: Database["public"]["Enums"]["complaint_status"]
           subject: string
         }
         Update: {
-          author_id?: string | null
           created_at?: string
           id?: string
           order_id?: string | null
-          rating?: number | null
           status?: Database["public"]["Enums"]["complaint_status"]
           subject?: string
         }
@@ -169,119 +151,16 @@ export type Database = {
           },
         ]
       }
-      order_comment_reads: {
-        Row: {
-          id: string
-          last_read_at: string
-          order_id: string
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          last_read_at?: string
-          order_id: string
-          user_id?: string
-        }
-        Update: {
-          id?: string
-          last_read_at?: string
-          order_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "order_comment_reads_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      order_comments: {
-        Row: {
-          author_id: string
-          body: string
-          created_at: string
-          id: string
-          order_id: string
-          updated_at: string
-        }
-        Insert: {
-          author_id?: string
-          body: string
-          created_at?: string
-          id?: string
-          order_id: string
-          updated_at?: string
-        }
-        Update: {
-          author_id?: string
-          body?: string
-          created_at?: string
-          id?: string
-          order_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "order_comments_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      order_ratings: {
-        Row: {
-          author_id: string
-          created_at: string
-          id: string
-          order_id: string
-          rating: number
-          updated_at: string
-        }
-        Insert: {
-          author_id?: string
-          created_at?: string
-          id?: string
-          order_id: string
-          rating: number
-          updated_at?: string
-        }
-        Update: {
-          author_id?: string
-          created_at?: string
-          id?: string
-          order_id?: string
-          rating?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "order_ratings_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       orders: {
         Row: {
           amount: number
           attempts_count: number
           call_center_id: string | null
-          call_status: string
           closed_at: string | null
           created_at: string
-          customer_name: string
           first_attempt_at: string | null
           handled: boolean
           id: string
-          order_no: number
-          product_name: string
           seller_id: string
           status: Database["public"]["Enums"]["order_status"]
           target_response_minutes: number
@@ -291,15 +170,11 @@ export type Database = {
           amount?: number
           attempts_count?: number
           call_center_id?: string | null
-          call_status?: string
           closed_at?: string | null
           created_at?: string
-          customer_name?: string
           first_attempt_at?: string | null
           handled?: boolean
           id?: string
-          order_no?: number
-          product_name?: string
           seller_id: string
           status?: Database["public"]["Enums"]["order_status"]
           target_response_minutes?: number
@@ -309,15 +184,11 @@ export type Database = {
           amount?: number
           attempts_count?: number
           call_center_id?: string | null
-          call_status?: string
           closed_at?: string | null
           created_at?: string
-          customer_name?: string
           first_attempt_at?: string | null
           handled?: boolean
           id?: string
-          order_no?: number
-          product_name?: string
           seller_id?: string
           status?: Database["public"]["Enums"]["order_status"]
           target_response_minutes?: number
@@ -442,6 +313,35 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "staff_roles"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      role_permissions: {
+        Row: {
+          created_at: string
+          id: string
+          permission: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          permission: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          permission?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_fkey"
+            columns: ["permission"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["key"]
           },
         ]
       }
@@ -670,13 +570,15 @@ export type Database = {
     Functions: {
       admin_activity_log: { Args: { _limit?: number }; Returns: Json }
       admin_dashboard: { Args: { _from: string; _to: string }; Returns: Json }
-      admin_order_detail: { Args: { _id: string }; Returns: Json }
-      admin_orders_overview: { Args: never; Returns: Json }
       admin_user_detail: { Args: { _id: string }; Returns: Json }
       admin_users_list: { Args: never; Returns: Json }
       call_centers_overview: { Args: never; Returns: Json }
       callcenter_dashboard: { Args: { _cc_id: string }; Returns: Json }
       has_perm: { Args: { _perm: string; _user_id: string }; Returns: boolean }
+      has_permission: {
+        Args: { _permission: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -684,18 +586,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      mark_all_order_comments_read: { Args: never; Returns: undefined }
-      mark_order_comments_read: {
-        Args: { _order_id: string }
-        Returns: undefined
-      }
       my_permissions: { Args: never; Returns: string[] }
-      order_comments_list: { Args: { _order_id: string }; Returns: Json }
-      order_comments_unread: { Args: never; Returns: Json }
-      owns_order_as_seller: {
-        Args: { _order_id: string; _user_id: string }
-        Returns: boolean
-      }
       seller_dashboard: { Args: { _seller_id: string }; Returns: Json }
       sellers_overview: { Args: never; Returns: Json }
       staff_roles_overview: { Args: never; Returns: Json }

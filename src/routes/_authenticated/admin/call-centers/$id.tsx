@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 
 import { AdminShell } from "@/components/admin/AdminShell";
 import { StatCard } from "@/components/admin/StatCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchCallCentersOverview } from "@/lib/call-centers";
+import { getCallCentersOverview } from "@/lib/call-centers.functions";
 import { nf, statusLabel } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/admin/call-centers/$id")({
@@ -48,7 +49,8 @@ export const Route = createFileRoute("/_authenticated/admin/call-centers/$id")({
 
 function CallCenterDetail() {
   const { id } = Route.useParams();
-  const query = useQuery({ queryKey: ["call-centers-overview"], queryFn: fetchCallCentersOverview });
+  const fetchOverview = useServerFn(getCallCentersOverview);
+  const query = useQuery({ queryKey: ["call-centers-overview"], queryFn: () => fetchOverview() });
 
   const item = query.data?.items.find((i) => i.id === id);
 

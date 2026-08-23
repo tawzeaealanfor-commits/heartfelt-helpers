@@ -11,26 +11,22 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as CallcenterIndexRouteImport } from './routes/callcenter/index'
 import { Route as CallcenterLoginRouteImport } from './routes/callcenter/login'
 import { Route as CallcenterSignupRouteImport } from './routes/callcenter/signup'
-import { Route as ManagementLoginRouteImport } from './routes/management/login'
 import { Route as SellerIndexRouteImport } from './routes/seller/index'
 import { Route as SellerLoginRouteImport } from './routes/seller/login'
 import { Route as SellerSignupRouteImport } from './routes/seller/signup'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
-import { Route as AuthenticatedAdminActivityLogRouteImport } from './routes/_authenticated/admin/activity-log'
+import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authenticated/admin/activity'
 import { Route as AuthenticatedAdminEmployeesRouteImport } from './routes/_authenticated/admin/employees'
+import { Route as AuthenticatedAdminRolesRouteImport } from './routes/_authenticated/admin/roles'
 import { Route as AuthenticatedCallcenterDashboardRouteImport } from './routes/_authenticated/callcenter/dashboard'
 import { Route as AuthenticatedManagementDashboardRouteImport } from './routes/_authenticated/management/dashboard'
 import { Route as AuthenticatedSellerDashboardRouteImport } from './routes/_authenticated/seller/dashboard'
 import { Route as AuthenticatedAdminCallCentersIndexRouteImport } from './routes/_authenticated/admin/call-centers/index'
 import { Route as AuthenticatedAdminCallCentersIdRouteImport } from './routes/_authenticated/admin/call-centers/$id'
-import { Route as AuthenticatedAdminOrdersIndexRouteImport } from './routes/_authenticated/admin/orders/index'
-import { Route as AuthenticatedAdminOrdersIdRouteImport } from './routes/_authenticated/admin/orders/$id'
 import { Route as AuthenticatedAdminRolesPermissionsIndexRouteImport } from './routes/_authenticated/admin/roles-permissions/index'
-import { Route as AuthenticatedAdminRolesPermissionsIdRouteImport } from './routes/_authenticated/admin/roles-permissions/$id'
 import { Route as AuthenticatedAdminSellersIndexRouteImport } from './routes/_authenticated/admin/sellers/index'
 import { Route as AuthenticatedAdminSellersIdRouteImport } from './routes/_authenticated/admin/sellers/$id'
 import { Route as AuthenticatedAdminUsersIndexRouteImport } from './routes/_authenticated/admin/users/index'
@@ -43,11 +39,6 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CallcenterIndexRoute = CallcenterIndexRouteImport.update({
@@ -63,11 +54,6 @@ const CallcenterLoginRoute = CallcenterLoginRouteImport.update({
 const CallcenterSignupRoute = CallcenterSignupRouteImport.update({
   id: '/callcenter/signup',
   path: '/callcenter/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ManagementLoginRoute = ManagementLoginRouteImport.update({
-  id: '/management/login',
-  path: '/management/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellerIndexRoute = SellerIndexRouteImport.update({
@@ -90,10 +76,10 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAdminActivityLogRoute =
-  AuthenticatedAdminActivityLogRouteImport.update({
-    id: '/admin/activity-log',
-    path: '/admin/activity-log',
+const AuthenticatedAdminActivityRoute =
+  AuthenticatedAdminActivityRouteImport.update({
+    id: '/admin/activity',
+    path: '/admin/activity',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminEmployeesRoute =
@@ -102,6 +88,11 @@ const AuthenticatedAdminEmployeesRoute =
     path: '/admin/employees',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminRolesRoute = AuthenticatedAdminRolesRouteImport.update({
+  id: '/admin/roles',
+  path: '/admin/roles',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCallcenterDashboardRoute =
   AuthenticatedCallcenterDashboardRouteImport.update({
     id: '/callcenter/dashboard',
@@ -132,28 +123,10 @@ const AuthenticatedAdminCallCentersIdRoute =
     path: '/admin/call-centers/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminOrdersIndexRoute =
-  AuthenticatedAdminOrdersIndexRouteImport.update({
-    id: '/admin/orders/',
-    path: '/admin/orders/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminOrdersIdRoute =
-  AuthenticatedAdminOrdersIdRouteImport.update({
-    id: '/admin/orders/$id',
-    path: '/admin/orders/$id',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedAdminRolesPermissionsIndexRoute =
   AuthenticatedAdminRolesPermissionsIndexRouteImport.update({
     id: '/admin/roles-permissions/',
     path: '/admin/roles-permissions/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminRolesPermissionsIdRoute =
-  AuthenticatedAdminRolesPermissionsIdRouteImport.update({
-    id: '/admin/roles-permissions/$id',
-    path: '/admin/roles-permissions/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminSellersIndexRoute =
@@ -183,54 +156,46 @@ const AuthenticatedAdminUsersIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin/login': typeof AdminLoginRoute
   '/callcenter/login': typeof CallcenterLoginRoute
   '/callcenter/signup': typeof CallcenterSignupRoute
-  '/management/login': typeof ManagementLoginRoute
   '/seller/login': typeof SellerLoginRoute
   '/seller/signup': typeof SellerSignupRoute
   '/callcenter/': typeof CallcenterIndexRoute
   '/seller/': typeof SellerIndexRoute
-  '/admin/activity-log': typeof AuthenticatedAdminActivityLogRoute
+  '/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/admin/employees': typeof AuthenticatedAdminEmployeesRoute
+  '/admin/roles': typeof AuthenticatedAdminRolesRoute
   '/callcenter/dashboard': typeof AuthenticatedCallcenterDashboardRoute
   '/management/dashboard': typeof AuthenticatedManagementDashboardRoute
   '/seller/dashboard': typeof AuthenticatedSellerDashboardRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/call-centers/$id': typeof AuthenticatedAdminCallCentersIdRoute
-  '/admin/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
-  '/admin/roles-permissions/$id': typeof AuthenticatedAdminRolesPermissionsIdRoute
   '/admin/sellers/$id': typeof AuthenticatedAdminSellersIdRoute
   '/admin/users/$id': typeof AuthenticatedAdminUsersIdRoute
   '/admin/call-centers/': typeof AuthenticatedAdminCallCentersIndexRoute
-  '/admin/orders/': typeof AuthenticatedAdminOrdersIndexRoute
   '/admin/roles-permissions/': typeof AuthenticatedAdminRolesPermissionsIndexRoute
   '/admin/sellers/': typeof AuthenticatedAdminSellersIndexRoute
   '/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin/login': typeof AdminLoginRoute
   '/callcenter/login': typeof CallcenterLoginRoute
   '/callcenter/signup': typeof CallcenterSignupRoute
-  '/management/login': typeof ManagementLoginRoute
   '/seller/login': typeof SellerLoginRoute
   '/seller/signup': typeof SellerSignupRoute
   '/callcenter': typeof CallcenterIndexRoute
   '/seller': typeof SellerIndexRoute
-  '/admin/activity-log': typeof AuthenticatedAdminActivityLogRoute
+  '/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/admin/employees': typeof AuthenticatedAdminEmployeesRoute
+  '/admin/roles': typeof AuthenticatedAdminRolesRoute
   '/callcenter/dashboard': typeof AuthenticatedCallcenterDashboardRoute
   '/management/dashboard': typeof AuthenticatedManagementDashboardRoute
   '/seller/dashboard': typeof AuthenticatedSellerDashboardRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/call-centers/$id': typeof AuthenticatedAdminCallCentersIdRoute
-  '/admin/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
-  '/admin/roles-permissions/$id': typeof AuthenticatedAdminRolesPermissionsIdRoute
   '/admin/sellers/$id': typeof AuthenticatedAdminSellersIdRoute
   '/admin/users/$id': typeof AuthenticatedAdminUsersIdRoute
   '/admin/call-centers': typeof AuthenticatedAdminCallCentersIndexRoute
-  '/admin/orders': typeof AuthenticatedAdminOrdersIndexRoute
   '/admin/roles-permissions': typeof AuthenticatedAdminRolesPermissionsIndexRoute
   '/admin/sellers': typeof AuthenticatedAdminSellersIndexRoute
   '/admin/users': typeof AuthenticatedAdminUsersIndexRoute
@@ -239,27 +204,23 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/admin/login': typeof AdminLoginRoute
   '/callcenter/login': typeof CallcenterLoginRoute
   '/callcenter/signup': typeof CallcenterSignupRoute
-  '/management/login': typeof ManagementLoginRoute
   '/seller/login': typeof SellerLoginRoute
   '/seller/signup': typeof SellerSignupRoute
   '/callcenter/': typeof CallcenterIndexRoute
   '/seller/': typeof SellerIndexRoute
-  '/_authenticated/admin/activity-log': typeof AuthenticatedAdminActivityLogRoute
+  '/_authenticated/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/_authenticated/admin/employees': typeof AuthenticatedAdminEmployeesRoute
+  '/_authenticated/admin/roles': typeof AuthenticatedAdminRolesRoute
   '/_authenticated/callcenter/dashboard': typeof AuthenticatedCallcenterDashboardRoute
   '/_authenticated/management/dashboard': typeof AuthenticatedManagementDashboardRoute
   '/_authenticated/seller/dashboard': typeof AuthenticatedSellerDashboardRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/call-centers/$id': typeof AuthenticatedAdminCallCentersIdRoute
-  '/_authenticated/admin/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
-  '/_authenticated/admin/roles-permissions/$id': typeof AuthenticatedAdminRolesPermissionsIdRoute
   '/_authenticated/admin/sellers/$id': typeof AuthenticatedAdminSellersIdRoute
   '/_authenticated/admin/users/$id': typeof AuthenticatedAdminUsersIdRoute
   '/_authenticated/admin/call-centers/': typeof AuthenticatedAdminCallCentersIndexRoute
-  '/_authenticated/admin/orders/': typeof AuthenticatedAdminOrdersIndexRoute
   '/_authenticated/admin/roles-permissions/': typeof AuthenticatedAdminRolesPermissionsIndexRoute
   '/_authenticated/admin/sellers/': typeof AuthenticatedAdminSellersIndexRoute
   '/_authenticated/admin/users/': typeof AuthenticatedAdminUsersIndexRoute
@@ -268,54 +229,46 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin/login'
     | '/callcenter/login'
     | '/callcenter/signup'
-    | '/management/login'
     | '/seller/login'
     | '/seller/signup'
     | '/callcenter/'
     | '/seller/'
-    | '/admin/activity-log'
+    | '/admin/activity'
     | '/admin/employees'
+    | '/admin/roles'
     | '/callcenter/dashboard'
     | '/management/dashboard'
     | '/seller/dashboard'
     | '/admin/'
     | '/admin/call-centers/$id'
-    | '/admin/orders/$id'
-    | '/admin/roles-permissions/$id'
     | '/admin/sellers/$id'
     | '/admin/users/$id'
     | '/admin/call-centers/'
-    | '/admin/orders/'
     | '/admin/roles-permissions/'
     | '/admin/sellers/'
     | '/admin/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin/login'
     | '/callcenter/login'
     | '/callcenter/signup'
-    | '/management/login'
     | '/seller/login'
     | '/seller/signup'
     | '/callcenter'
     | '/seller'
-    | '/admin/activity-log'
+    | '/admin/activity'
     | '/admin/employees'
+    | '/admin/roles'
     | '/callcenter/dashboard'
     | '/management/dashboard'
     | '/seller/dashboard'
     | '/admin'
     | '/admin/call-centers/$id'
-    | '/admin/orders/$id'
-    | '/admin/roles-permissions/$id'
     | '/admin/sellers/$id'
     | '/admin/users/$id'
     | '/admin/call-centers'
-    | '/admin/orders'
     | '/admin/roles-permissions'
     | '/admin/sellers'
     | '/admin/users'
@@ -323,27 +276,23 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/admin/login'
     | '/callcenter/login'
     | '/callcenter/signup'
-    | '/management/login'
     | '/seller/login'
     | '/seller/signup'
     | '/callcenter/'
     | '/seller/'
-    | '/_authenticated/admin/activity-log'
+    | '/_authenticated/admin/activity'
     | '/_authenticated/admin/employees'
+    | '/_authenticated/admin/roles'
     | '/_authenticated/callcenter/dashboard'
     | '/_authenticated/management/dashboard'
     | '/_authenticated/seller/dashboard'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/call-centers/$id'
-    | '/_authenticated/admin/orders/$id'
-    | '/_authenticated/admin/roles-permissions/$id'
     | '/_authenticated/admin/sellers/$id'
     | '/_authenticated/admin/users/$id'
     | '/_authenticated/admin/call-centers/'
-    | '/_authenticated/admin/orders/'
     | '/_authenticated/admin/roles-permissions/'
     | '/_authenticated/admin/sellers/'
     | '/_authenticated/admin/users/'
@@ -352,10 +301,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AdminLoginRoute: typeof AdminLoginRoute
   CallcenterLoginRoute: typeof CallcenterLoginRoute
   CallcenterSignupRoute: typeof CallcenterSignupRoute
-  ManagementLoginRoute: typeof ManagementLoginRoute
   SellerLoginRoute: typeof SellerLoginRoute
   SellerSignupRoute: typeof SellerSignupRoute
   CallcenterIndexRoute: typeof CallcenterIndexRoute
@@ -378,13 +325,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/callcenter/': {
       id: '/callcenter/'
       path: '/callcenter'
@@ -404,13 +344,6 @@ declare module '@tanstack/react-router' {
       path: '/callcenter/signup'
       fullPath: '/callcenter/signup'
       preLoaderRoute: typeof CallcenterSignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/management/login': {
-      id: '/management/login'
-      path: '/management/login'
-      fullPath: '/management/login'
-      preLoaderRoute: typeof ManagementLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seller/': {
@@ -441,11 +374,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/activity-log': {
-      id: '/_authenticated/admin/activity-log'
-      path: '/admin/activity-log'
-      fullPath: '/admin/activity-log'
-      preLoaderRoute: typeof AuthenticatedAdminActivityLogRouteImport
+    '/_authenticated/admin/activity': {
+      id: '/_authenticated/admin/activity'
+      path: '/admin/activity'
+      fullPath: '/admin/activity'
+      preLoaderRoute: typeof AuthenticatedAdminActivityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/employees': {
@@ -453,6 +386,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/employees'
       fullPath: '/admin/employees'
       preLoaderRoute: typeof AuthenticatedAdminEmployeesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/roles': {
+      id: '/_authenticated/admin/roles'
+      path: '/admin/roles'
+      fullPath: '/admin/roles'
+      preLoaderRoute: typeof AuthenticatedAdminRolesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/callcenter/dashboard': {
@@ -490,32 +430,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCallCentersIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/orders/': {
-      id: '/_authenticated/admin/orders/'
-      path: '/admin/orders'
-      fullPath: '/admin/orders/'
-      preLoaderRoute: typeof AuthenticatedAdminOrdersIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/orders/$id': {
-      id: '/_authenticated/admin/orders/$id'
-      path: '/admin/orders/$id'
-      fullPath: '/admin/orders/$id'
-      preLoaderRoute: typeof AuthenticatedAdminOrdersIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/admin/roles-permissions/': {
       id: '/_authenticated/admin/roles-permissions/'
       path: '/admin/roles-permissions'
       fullPath: '/admin/roles-permissions/'
       preLoaderRoute: typeof AuthenticatedAdminRolesPermissionsIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/roles-permissions/$id': {
-      id: '/_authenticated/admin/roles-permissions/$id'
-      path: '/admin/roles-permissions/$id'
-      fullPath: '/admin/roles-permissions/$id'
-      preLoaderRoute: typeof AuthenticatedAdminRolesPermissionsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/sellers/': {
@@ -550,40 +469,35 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminActivityLogRoute: typeof AuthenticatedAdminActivityLogRoute
+  AuthenticatedAdminActivityRoute: typeof AuthenticatedAdminActivityRoute
   AuthenticatedAdminEmployeesRoute: typeof AuthenticatedAdminEmployeesRoute
+  AuthenticatedAdminRolesRoute: typeof AuthenticatedAdminRolesRoute
   AuthenticatedCallcenterDashboardRoute: typeof AuthenticatedCallcenterDashboardRoute
   AuthenticatedManagementDashboardRoute: typeof AuthenticatedManagementDashboardRoute
   AuthenticatedSellerDashboardRoute: typeof AuthenticatedSellerDashboardRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminCallCentersIdRoute: typeof AuthenticatedAdminCallCentersIdRoute
-  AuthenticatedAdminOrdersIdRoute: typeof AuthenticatedAdminOrdersIdRoute
-  AuthenticatedAdminRolesPermissionsIdRoute: typeof AuthenticatedAdminRolesPermissionsIdRoute
   AuthenticatedAdminSellersIdRoute: typeof AuthenticatedAdminSellersIdRoute
   AuthenticatedAdminUsersIdRoute: typeof AuthenticatedAdminUsersIdRoute
   AuthenticatedAdminCallCentersIndexRoute: typeof AuthenticatedAdminCallCentersIndexRoute
-  AuthenticatedAdminOrdersIndexRoute: typeof AuthenticatedAdminOrdersIndexRoute
   AuthenticatedAdminRolesPermissionsIndexRoute: typeof AuthenticatedAdminRolesPermissionsIndexRoute
   AuthenticatedAdminSellersIndexRoute: typeof AuthenticatedAdminSellersIndexRoute
   AuthenticatedAdminUsersIndexRoute: typeof AuthenticatedAdminUsersIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminActivityLogRoute: AuthenticatedAdminActivityLogRoute,
+  AuthenticatedAdminActivityRoute: AuthenticatedAdminActivityRoute,
   AuthenticatedAdminEmployeesRoute: AuthenticatedAdminEmployeesRoute,
+  AuthenticatedAdminRolesRoute: AuthenticatedAdminRolesRoute,
   AuthenticatedCallcenterDashboardRoute: AuthenticatedCallcenterDashboardRoute,
   AuthenticatedManagementDashboardRoute: AuthenticatedManagementDashboardRoute,
   AuthenticatedSellerDashboardRoute: AuthenticatedSellerDashboardRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminCallCentersIdRoute: AuthenticatedAdminCallCentersIdRoute,
-  AuthenticatedAdminOrdersIdRoute: AuthenticatedAdminOrdersIdRoute,
-  AuthenticatedAdminRolesPermissionsIdRoute:
-    AuthenticatedAdminRolesPermissionsIdRoute,
   AuthenticatedAdminSellersIdRoute: AuthenticatedAdminSellersIdRoute,
   AuthenticatedAdminUsersIdRoute: AuthenticatedAdminUsersIdRoute,
   AuthenticatedAdminCallCentersIndexRoute:
     AuthenticatedAdminCallCentersIndexRoute,
-  AuthenticatedAdminOrdersIndexRoute: AuthenticatedAdminOrdersIndexRoute,
   AuthenticatedAdminRolesPermissionsIndexRoute:
     AuthenticatedAdminRolesPermissionsIndexRoute,
   AuthenticatedAdminSellersIndexRoute: AuthenticatedAdminSellersIndexRoute,
@@ -596,10 +510,8 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AdminLoginRoute: AdminLoginRoute,
   CallcenterLoginRoute: CallcenterLoginRoute,
   CallcenterSignupRoute: CallcenterSignupRoute,
-  ManagementLoginRoute: ManagementLoginRoute,
   SellerLoginRoute: SellerLoginRoute,
   SellerSignupRoute: SellerSignupRoute,
   CallcenterIndexRoute: CallcenterIndexRoute,

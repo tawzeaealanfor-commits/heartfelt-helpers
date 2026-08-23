@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -11,9 +12,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  fetchCallCentersOverview,
+  getCallCentersOverview,
   type CallCenterItem,
-} from "@/lib/call-centers";
+} from "@/lib/call-centers.functions";
 import { applyFilters, type FilterColumn, type FilterRow } from "@/lib/filters";
 import { nf, statusLabel } from "@/lib/format";
 
@@ -70,7 +71,8 @@ const FILTER_COLUMNS: FilterColumn[] = [
 ];
 
 function CallCentersPage() {
-  const query = useQuery({ queryKey: ["call-centers-overview"], queryFn: fetchCallCentersOverview });
+  const fetchOverview = useServerFn(getCallCentersOverview);
+  const query = useQuery({ queryKey: ["call-centers-overview"], queryFn: () => fetchOverview() });
 
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<FilterRow[]>([]);
@@ -131,11 +133,7 @@ function CallCentersPage() {
         ) : !stats ? (
           <Card className="rounded-xl shadow-sm">
             <CardContent className="p-6 text-center text-sm text-muted-foreground">
-              {query.error instanceof Error && query.error.message.includes("FORBIDDEN")
-                ? "هذه الصفحة مخصصة للإدارة فقط."
-                : query.error instanceof Error
-                  ? `تعذر تحميل البيانات: ${query.error.message}`
-                  : "لم يتم العثور على البيانات."}
+              لم يتم العثور على البيانات.
             </CardContent>
           </Card>
         ) : (

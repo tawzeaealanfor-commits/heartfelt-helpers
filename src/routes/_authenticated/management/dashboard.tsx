@@ -28,16 +28,15 @@ function ManagementDashboardView() {
   const account = useAccount();
   const role = account.data?.accountType ?? "employee";
 
-  // الصلاحيات الفعلية للمستخدم = دور الموظف + الاستثناءات الخاصة (نفس مصدر الباك اند)
   const permissions = useQuery({
-    queryKey: ["my-permissions-detail"],
+    queryKey: ["role-permissions", role],
     enabled: Boolean(account.data),
     queryFn: async () => {
-      const [{ data: mine }, { data: perms }] = await Promise.all([
-        supabase.rpc("my_permissions"),
+      const [{ data: rp }, { data: perms }] = await Promise.all([
+        supabase.from("role_permissions").select("permission").eq("role", role),
         supabase.from("permissions").select("key, label, category"),
       ]);
-      const allowed = new Set((mine ?? []) as string[]);
+      const allowed = new Set((rp ?? []).map((r) => r.permission));
       return (perms ?? []).filter((p) => allowed.has(p.key));
     },
   });

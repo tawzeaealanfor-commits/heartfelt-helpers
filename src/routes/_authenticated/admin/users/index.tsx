@@ -4,10 +4,10 @@ import { ArrowUpDown } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/admin/AdminShell";
-import { DataFilters } from "@/components/admin/DataFilters";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -24,25 +24,6 @@ import {
   type AccountType,
 } from "@/lib/access";
 import { fetchAdminUsers, formatDateTime, type AdminUserRow } from "@/lib/admin-users";
-import { applyFilters, type FilterColumn, type FilterRow } from "@/lib/filters";
-
-const FILTER_COLUMNS: FilterColumn[] = [
-  { key: "full_name", label: "الاسم", type: "text" },
-  {
-    key: "account_type",
-    label: "نوع الحساب",
-    type: "enum",
-    format: (v) => ACCOUNT_TYPE_LABELS[v as AccountType] ?? v,
-  },
-  { key: "email", label: "البريد", type: "text" },
-  { key: "phone", label: "الهاتف", type: "text" },
-  {
-    key: "status",
-    label: "الحالة",
-    type: "enum",
-    format: (v) => ACCOUNT_STATUS_LABELS[v as AccountStatus] ?? v,
-  },
-];
 
 const description = "إدارة جميع مستخدمي منصة Kassebni_Call2Sell: البائعون، الكول سنتر، الموظفون والمشرفون.";
 
@@ -67,74 +48,104 @@ function UsersPage() {
   const users = useQuery({ queryKey: ["admin-users"], queryFn: fetchAdminUsers });
 
   const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState<FilterRow[]>([]);
+  const [type, setType] = useState<"all" | AccountType>("all");
+  const [status, setStatus] = useState<"all" | AccountStatus>("all");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [sort, setSort] = useState<SortKey>("created_at");
   const [asc, setAsc] = useState(false);
 
-  const all = users.data ?? [];
-
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
-    const bySearch = term
-      ? all.filter((u) =>
-          [u.full_name, u.email, u.phone].some((v) => (v ?? "").toLowerCase().includes(term)),
-        )
-      : all;
+    let list = (users.data ?? []).filter((u) => {
+      if (type !== "all" && u.account_type !== type) return false;
+      if (status !== "all" && u.status !== status) return false;
+      if (from && new Date(u.created_at) < new Date(`${from}T00:00:00`)) return false;
+      if (to && new Date(u.created_at) > new Date(`${to}T23:59:59`)) return false;
+      if (!term) return true;
+      return [u.full_name, u.email, u.phone].some((v) => (v ?? "").toLowerCase().includes(term));
+    });
 
-    const filtered = applyFilters(
-      bySearch as unknown as Record<string, unknown>[],
-      filters,
-      FILTER_COLUMNS,
-    ) as unknown as AdminUserRow[];
-
-    return [...filtered].sort((a, b) => {
+    list = [...list].sort((a, b) => {
       const av = (a[sort] ?? "") as string;
       const bv = (b[sort] ?? "") as string;
       return asc ? av.localeCompare(bv, "ar") : bv.localeCompare(av, "ar");
     });
-  }, [all, search, filters, sort, asc]);
+    return list;
+  }, [users.data, search, type, status, from, to, sort, asc]);
 
   return (
     <AdminShell>
       <div className="mx-auto max-w-6xl space-y-6">
         <h1 className="text-2xl font-bold">المستخدمون</h1>
 
-        <div className="space-y-2">
-          <DataFilters
-            search={search}
-            onSearchChange={setSearch}
-            searchPlaceholder="ابحث بالاسم أو البريد أو الهاتف"
-            columns={FILTER_COLUMNS}
-            rows={all as unknown as Record<string, unknown>[]}
-            filters={filters}
-            onFiltersChange={setFilters}
-          />
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">الترتيب</span>
-            <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-              <SelectTrigger className="h-9 w-40 rounded-full bg-card text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="created_at">تاريخ التسجيل</SelectItem>
-                <SelectItem value="full_name">الاسم</SelectItem>
-                <SelectItem value="last_sign_in_at">آخر دخول</SelectItem>
-                <SelectItem value="account_type">نوع الحساب</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="outline"
-              size="icon"
-              className="size-9 rounded-full bg-card"
-              aria-label="عكس الترتيب"
-              onClick={() => setAsc((v) => !v)}
-            >
-              <ArrowUpDown className="size-4" />
-            </Button>
-          </div>
-        </div>
-
+        <Card className="rounded-xl shadow-sm">
+          <CardContent className="flex flex-wrap items-end gap-3 p-4">
+            <div className="min-w-[14rem] flex-1 space-y-1">
+              <label className="text-xs text-muted-foreground">بحث بالاسم أو البريد أو الهاتف</label>
+              <Input value={search} onChange={(e) => setSearch(e.target.value)} className="rounded-full" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">نوع الحساب</label>
+              <Select value={type} onValueChange={(v) => setType(v as typeof type)}>
+                <SelectTrigger className="w-40 rounded-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">الكل</SelectItem>
+                  {(Object.keys(ACCOUNT_TYPE_LABELS) as AccountType[]).map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {ACCOUNT_TYPE_LABELS[t]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">حالة الحساب</label>
+              <Select value={status} onValueChange={(v) => setStatus(v as typeof status)}>
+                <SelectTrigger className="w-36 rounded-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">الكل</SelectItem>
+                  {(Object.keys(ACCOUNT_STATUS_LABELS) as AccountStatus[]).map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {ACCOUNT_STATUS_LABELS[s]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">التسجيل من</label>
+              <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-40 rounded-full" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">إلى</label>
+              <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-40 rounded-full" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">الترتيب</label>
+              <div className="flex gap-2">
+                <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
+                  <SelectTrigger className="w-40 rounded-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="created_at">تاريخ التسجيل</SelectItem>
+                    <SelectItem value="full_name">الاسم</SelectItem>
+                    <SelectItem value="last_sign_in_at">آخر دخول</SelectItem>
+                    <SelectItem value="account_type">نوع الحساب</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" size="icon" className="rounded-full" onClick={() => setAsc((v) => !v)}>
+                  <ArrowUpDown className="size-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {users.isLoading ? (
           <Skeleton className="h-64 w-full" />

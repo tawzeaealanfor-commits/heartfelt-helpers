@@ -76,18 +76,13 @@ export function dashboardPathFor(type: AccountType): string {
   }
 }
 
-/** صفحة الدخول لكل بوابة: /admin/login للإدارة، وبوابة مستقلة للبائع والكول سنتر. */
+/** صفحة الدخول: الإدارة على الصفحة الرئيسية، والبائع/الكول سنتر على بوابتيهما. */
 export function loginPathFor(portal: Portal): string {
-  return portal === "staff" ? "/admin/login" : `/${portal}/login`;
-}
-
-/** بوابة الإدارة لها مدخلان حسب المسار: /admin/login للمشرفين و/management/login للموظفين. */
-export function staffLoginPathFor(pathname: string): string {
-  return pathname.startsWith("/management") ? "/management/login" : "/admin/login";
+  return portal === "staff" ? "/" : `/${portal}/login`;
 }
 
 export function signupPathFor(portal: Portal): string {
-  return portal === "staff" ? "/admin/login" : `/${portal}/signup`;
+  return portal === "staff" ? "/" : `/${portal}/signup`;
 }
 
 export function portalFromPath(pathname: string): Portal {

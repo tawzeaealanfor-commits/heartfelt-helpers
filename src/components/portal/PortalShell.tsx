@@ -17,7 +17,6 @@ import {
   type AccountType,
   type Portal,
 } from "@/lib/access";
-import { DEMO_CALL_CENTER_ID, DEMO_SELLER_ID } from "@/lib/demo";
 
 export type ActingTarget = {
   userId: string;
@@ -56,10 +55,8 @@ export function PortalShell({
   const location = useLocation();
   const account = useAccount();
 
-  const params = new URLSearchParams(location.searchStr ?? "");
-  const actingId = params.get("as");
+  const actingId = new URLSearchParams(location.searchStr ?? "").get("as");
   const isAdmin = account.data?.isAdmin === true;
-  const demo = params.get("demo") === "1" && isAdmin;
 
   const target = useQuery({
     queryKey: ["acting-target", actingId],
@@ -82,8 +79,7 @@ export function PortalShell({
   const acting = actingId && isAdmin ? target.data ?? null : null;
   const allowed =
     account.data &&
-    (PORTAL_ALLOWED_TYPES[portal].includes(account.data.accountType) ||
-      (isAdmin && (Boolean(actingId) || demo)));
+    (PORTAL_ALLOWED_TYPES[portal].includes(account.data.accountType) || (isAdmin && Boolean(actingId)));
 
   useEffect(() => {
     if (account.isLoading || !account.data) return;
@@ -114,18 +110,6 @@ export function PortalShell({
 
   return (
     <div dir="rtl" className="min-h-screen bg-app-canvas">
-      {demo && (
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-primary/10 px-4 py-3 text-primary">
-          <p className="flex items-center gap-2 text-sm font-medium">
-            <ShieldCheck className="size-4" />
-            وضع المعاينة التجريبية — البيانات المعروضة تجريبية لعرض الشكل النهائي فقط.
-          </p>
-          <Button asChild size="sm" variant="outline" className="rounded-full">
-            <Link to="/admin">العودة إلى لوحة الإدارة</Link>
-          </Button>
-        </div>
-      )}
-
       {acting && (
         <div className="flex flex-wrap items-center justify-between gap-3 bg-warning/15 px-4 py-3 text-warning">
           <p className="flex items-center gap-2 text-sm font-medium">
@@ -145,7 +129,7 @@ export function PortalShell({
           <p className="text-sm font-semibold">Kassebni_Call2Sell</p>
           <p className="text-xs text-muted-foreground">{PORTAL_LABELS[portal]}</p>
         </div>
-        {!acting && !demo && (
+        {!acting && (
           <Button variant="ghost" size="sm" onClick={signOut} className="gap-2">
             <LogOut className="size-4" />
             تسجيل الخروج
@@ -155,12 +139,8 @@ export function PortalShell({
 
       <main className="p-4 md:p-6">
         {children({
-          sellerId: demo ? DEMO_SELLER_ID : acting ? acting.sellerId : account.data.sellerId,
-          callCenterId: demo
-            ? DEMO_CALL_CENTER_ID
-            : acting
-              ? acting.callCenterId
-              : account.data.callCenterId,
+          sellerId: acting ? acting.sellerId : account.data.sellerId,
+          callCenterId: acting ? acting.callCenterId : account.data.callCenterId,
           actingFor: acting,
           userId: acting ? acting.userId : account.data.userId,
         })}

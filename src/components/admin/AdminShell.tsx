@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Activity, Headset, Home, LogOut, Menu, ShieldCheck, ShoppingCart, Store, UserCog, Users } from "lucide-react";
+import { Activity, Headset, Home, LogOut, Menu, ShieldCheck, Store, UserCog, Users } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -10,17 +10,15 @@ import { cn } from "@/lib/utils";
 
 const MAIN_ITEMS = [
   { to: "/admin", label: "الرئيسية", icon: Home, exact: true },
-  { to: "/admin/orders", label: "الطلبات", icon: ShoppingCart, exact: false },
   { to: "/admin/call-centers", label: "الكول سنتر", icon: Headset, exact: false },
   { to: "/admin/sellers", label: "Sellers", icon: Store, exact: false },
 ] as const;
 
-
 const USER_ITEMS = [
   { to: "/admin/users", label: "المستخدمون", icon: Users, exact: false },
   { to: "/admin/employees", label: "الموظفون", icon: UserCog, exact: false },
-  { to: "/admin/roles-permissions", label: "الأدوار والصلاحيات", icon: ShieldCheck, exact: false },
-  { to: "/admin/activity-log", label: "سجل النشاطات", icon: Activity, exact: false },
+  { to: "/admin/roles", label: "الأدوار والصلاحيات", icon: ShieldCheck, exact: false },
+  { to: "/admin/activity", label: "سجل النشاطات", icon: Activity, exact: false },
 ] as const;
 
 const linkClass = cn(

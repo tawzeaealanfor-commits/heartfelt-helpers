@@ -1,18 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { AlertTriangle, Clock, CreditCard, Eye, Inbox, MessageSquareWarning } from "lucide-react";
+import { AlertTriangle, Clock, CreditCard, Inbox, MessageSquareWarning } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/admin/AdminShell";
-import { DateRangeBar } from "@/components/admin/DateRangeBar";
 import { PasswordGate } from "@/components/admin/PasswordGate";
 import { Section, StatCard } from "@/components/admin/StatCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAdminDashboard, getMyAccount } from "@/lib/dashboard.functions";
-import { DEMO_CALL_CENTER_PATH, DEMO_SELLER_PATH } from "@/lib/demo";
 import { nf } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
@@ -53,6 +52,8 @@ function AdminHome() {
     return { from: toInput(from), to: toInput(to) };
   }, []);
 
+  const [from, setFrom] = useState(defaults.from);
+  const [to, setTo] = useState(defaults.to);
   const [range, setRange] = useState(defaults);
 
   const fetchDashboard = useServerFn(getAdminDashboard);
@@ -101,27 +102,27 @@ function AdminHome() {
   return (
     <AdminShell>
       <div className="mx-auto max-w-5xl space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-bold">الرئيسية</h1>
-          <DateRangeBar range={range} onChange={setRange} />
-        </div>
+        <h1 className="text-2xl font-bold">الرئيسية</h1>
 
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed bg-card px-3 py-2">
-          <span className="text-xs font-medium text-muted-foreground">معاينة تجريبية:</span>
-          <Button asChild size="sm" variant="outline" className="gap-1 rounded-full text-xs">
-            <a href={DEMO_SELLER_PATH}>
-              <Eye className="size-3.5" />
-              بوابة البائع
-            </a>
-          </Button>
-          <Button asChild size="sm" variant="outline" className="gap-1 rounded-full text-xs">
-            <a href={DEMO_CALL_CENTER_PATH}>
-              <Eye className="size-3.5" />
-              بوابة الكول سنتر
-            </a>
-          </Button>
-        </div>
-
+        {/* شريط الفلتر */}
+        <Card className="rounded-xl shadow-sm">
+          <CardContent className="flex flex-wrap items-end gap-3 p-4">
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">من</label>
+              <Input
+                type="date"
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
+                className="w-40 rounded-full"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">إلى</label>
+              <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-40 rounded-full" />
+            </div>
+            <Button className="rounded-full" onClick={() => setRange({ from, to })}>تطبيق الفترة</Button>
+          </CardContent>
+        </Card>
 
         {dashboard.isLoading ? (
           <div className="space-y-4">

@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 
 import { AdminShell } from "@/components/admin/AdminShell";
 import { StatCard } from "@/components/admin/StatCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchSellersOverview } from "@/lib/sellers";
+import { getSellersOverview } from "@/lib/sellers.functions";
 import { nf, statusLabel } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/admin/sellers/$id")({
@@ -50,7 +51,8 @@ export const Route = createFileRoute("/_authenticated/admin/sellers/$id")({
 
 function SellerDetail() {
   const { id } = Route.useParams();
-  const query = useQuery({ queryKey: ["sellers-overview"], queryFn: fetchSellersOverview });
+  const fetchOverview = useServerFn(getSellersOverview);
+  const query = useQuery({ queryKey: ["sellers-overview"], queryFn: () => fetchOverview() });
 
   const item = query.data?.items.find((i) => i.id === id);
 
