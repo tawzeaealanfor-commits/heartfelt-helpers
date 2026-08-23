@@ -1,0 +1,14 @@
+REVOKE EXECUTE ON FUNCTION public.admin_users_list() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.admin_user_detail(uuid) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.admin_activity_log(int) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.has_permission(uuid, text) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.sellers_overview() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.call_centers_overview() FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.admin_users_list() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_user_detail(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_activity_log(int) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_permission(uuid, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.sellers_overview() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.call_centers_overview() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated;
